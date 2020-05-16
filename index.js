@@ -30,9 +30,9 @@ client.on('message', message => {
         let teamOne = teamCopy.splice(0, halfLenght);
         let teamTwo = teamCopy;
 
-        message.channel.send("Team 1:");
+        message.channel.send("Attackers:");
         message.channel.send(teamOne.join(" ").toString());
-        message.channel.send("Team 2:");
+        message.channel.send("Defenders:");
         message.channel.send(teamTwo.join(" ").toString());
 
     }
