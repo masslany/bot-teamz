@@ -6,19 +6,19 @@ client.once('ready', () => {
     console.log("Ready");
 })
 
-let team = [];
 
 client.on('message', message => {
-    if(message.content.startsWith(`${prefix}add`)) {
-        let players = message.content.substring(4, message.content.length);
-        team = players.split(";");
-    }
-
-    if(message.content.startsWith(`${prefix}clear`)) {
-        team = [];
-    }
 
     if(message.content.startsWith(`${prefix}shuffle`)) {
+
+        let usersVoiceChannel = message.member.voice.channel;
+        if(usersVoiceChannel === null || usersVoiceChannel === undefined) {
+            message.channel.send("Aby użyć tej komendy musisz być podłączony do kanału głosowego");
+            return;
+        }
+
+        let team = collectionToArray(usersVoiceChannel.members)
+
         if(team.length == 0) {
             message.channel.send("Brak graczy");
             return;
@@ -35,15 +35,29 @@ client.on('message', message => {
         message.channel.send("Defenders:");
         message.channel.send(teamTwo.join(" ").toString());
 
+        const secondVoiceChannel = message.guild.channels.cache.filter(c => c.name === 'ściernisko' && c.type === 'voice').first();
+        
+        teamTwo.forEach(m => {
+             m.voice.setChannel(secondVoiceChannel);
+        });
+
     }
 })
 
-function shuffle(a) {
+const shuffle = (a) => {
     for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+}
+
+const collectionToArray = (collection) => {
+    let resultArray = [];
+    for (const [key, value] of collection.entries()) {
+        resultArray.push(value);
+      }
+    return resultArray;
 }
 
 client.login(process.env.BOT_TOKEN);
